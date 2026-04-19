@@ -1,6 +1,3 @@
-package modelo;
-
-import conexion.Conexion;
 import java.sql.*;
 import java.util.ArrayList;
 
