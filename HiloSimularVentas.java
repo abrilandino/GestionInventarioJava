@@ -1,7 +1,3 @@
-package hilos;
-
-import modelo.Producto;
-import modelo.ProductoDAO;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,8 +18,7 @@ public class HiloSimularVentas extends Thread {
 
                 if (!productos.isEmpty()) {
                     Producto productoSeleccionado = productos.get(random.nextInt(productos.size()));
-
-                    int cantidadVenta = random.nextInt(3) + 1; // vende entre 1 y 3 unidades
+                    int cantidadVenta = random.nextInt(3) + 1;
 
                     System.out.println("Simulando venta de " + cantidadVenta +
                             " unidad(es) de: " + productoSeleccionado.getNombre());
@@ -31,7 +26,7 @@ public class HiloSimularVentas extends Thread {
                     dao.disminuirStock(productoSeleccionado.getId(), cantidadVenta);
                 }
 
-                Thread.sleep(3000); // espera 3 segundos
+                Thread.sleep(3000);
 
             } catch (InterruptedException e) {
                 System.out.println("HiloSimularVentas interrumpido: " + e.getMessage());
