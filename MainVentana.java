@@ -1,16 +1,10 @@
-package principal;
-
-import modelo.ProductoDAO;
-import hilos.HiloActualizarStock;
-import hilos.HiloSimularVentas;
-
-public class Main {
+public class MainVentana {
 
     public static void main(String[] args) {
 
         ProductoDAO dao = new ProductoDAO();
 
-        // Insertar algunos productos de prueba
+        // Insertar productos de prueba
         dao.insertar("Arroz", 25.50, 3);
         dao.insertar("Frijoles", 18.75, 8);
         dao.insertar("Azucar", 20.00, 2);
