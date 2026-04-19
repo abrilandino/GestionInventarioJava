@@ -1,7 +1,3 @@
-package hilos;
-
-import modelo.Producto;
-import modelo.ProductoDAO;
 import java.util.ArrayList;
 
 public class HiloActualizarStock extends Thread {
@@ -25,7 +21,7 @@ public class HiloActualizarStock extends Thread {
                     }
                 }
 
-                Thread.sleep(5000); // espera 5 segundos
+                Thread.sleep(5000);
 
             } catch (InterruptedException e) {
                 System.out.println("HiloActualizarStock interrumpido: " + e.getMessage());
