@@ -8,3 +8,10 @@ CREATE TABLE productos (
     precio DOUBLE NOT NULL,
     cantidad INT NOT NULL
 );
+
+CREATE TABLE productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    precio DOUBLE,
+    cantidad INT
+);
