@@ -1,151 +1,79 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * DAO: maneja todas las operaciones de base de datos
+ */
 public class ProductoDAO {
 
     // INSERTAR
-    public void insertar(String nombre, double precio, int cantidad) {
-        String sql = "INSERT INTO productos (nombre, precio, cantidad) VALUES (?, ?, ?)";
+    public void insertar(Producto p) {
+        String sql = "INSERT INTO productos(nombre, precio, stock) VALUES (?, ?, ?)";
 
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            ps.setString(1, nombre);
-            ps.setDouble(2, precio);
-            ps.setInt(3, cantidad);
-            ps.executeUpdate();
+            stmt.setString(1, p.getNombre());
+            stmt.setDouble(2, p.getPrecio());
+            stmt.setInt(3, p.getStock());
 
-            System.out.println("Producto insertado");
-
-        } catch (SQLException e) {
-            System.out.println("Error insertar: " + e.getMessage());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     // LISTAR
-    public void listar() {
+    public List<Producto> listar() {
+        List<Producto> lista = new ArrayList<>();
         String sql = "SELECT * FROM productos";
 
-        try (Connection con = Conexion.conectar();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try (Connection conn = ConexionBD.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                System.out.println(
-                    rs.getInt("id") + " - " +
-                    rs.getString("nombre") + " - " +
-                    rs.getDouble("precio") + " - " +
-                    rs.getInt("cantidad")
+                Producto p = new Producto(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock")
                 );
+                lista.add(p);
             }
-
-        } catch (SQLException e) {
-            System.out.println("Error listar: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }
-
-    // ACTUALIZAR
-    public void actualizar(int id, String nombre, double precio, int cantidad) {
-        String sql = "UPDATE productos SET nombre=?, precio=?, cantidad=? WHERE id=?";
-
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setString(1, nombre);
-            ps.setDouble(2, precio);
-            ps.setInt(3, cantidad);
-            ps.setInt(4, id);
-
-            ps.executeUpdate();
-            System.out.println("Producto actualizado");
-
-        } catch (SQLException e) {
-            System.out.println("Error actualizar: " + e.getMessage());
-        }
+        return lista;
     }
 
     // ELIMINAR
     public void eliminar(int id) {
-        String sql = "DELETE FROM productos WHERE id=?";
+        String sql = "DELETE FROM productos WHERE id = ?";
 
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
-            ps.executeUpdate();
-
-            System.out.println("Producto eliminado");
-
-        } catch (SQLException e) {
-            System.out.println("Error eliminar: " + e.getMessage());
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    // OBTENER TODOS LOS PRODUCTOS
-    public ArrayList<Producto> obtenerProductos() {
-        ArrayList<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM productos";
+    // ACTUALIZAR STOCK
+    public void actualizarStock(int id, int nuevoStock) {
+        String sql = "UPDATE productos SET stock=? WHERE id=?";
 
-        try (Connection con = Conexion.conectar();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try (Connection conn = ConexionBD.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                Producto p = new Producto(
-                    rs.getInt("id"),
-                    rs.getString("nombre"),
-                    rs.getDouble("precio"),
-                    rs.getInt("cantidad")
-                );
-                lista.add(p);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error obtenerProductos: " + e.getMessage());
-        }
-
-        return lista;
-    }
-
-    // AUMENTAR STOCK
-    public void aumentarStock(int id, int cantidadExtra) {
-        String sql = "UPDATE productos SET cantidad = cantidad + ? WHERE id = ?";
-
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, cantidadExtra);
-            ps.setInt(2, id);
-            ps.executeUpdate();
-
-            System.out.println("Stock aumentado al producto ID " + id);
-
-        } catch (SQLException e) {
-            System.out.println("Error aumentarStock: " + e.getMessage());
-        }
-    }
-
-    // DISMINUIR STOCK
-    public void disminuirStock(int id, int cantidadVenta) {
-        String sql = "UPDATE productos SET cantidad = cantidad - ? WHERE id = ? AND cantidad >= ?";
-
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, cantidadVenta);
-            ps.setInt(2, id);
-            ps.setInt(3, cantidadVenta);
-
-            int filas = ps.executeUpdate();
-
-            if (filas > 0) {
-                System.out.println("Venta realizada al producto ID " + id);
-            } else {
-                System.out.println("No hay suficiente stock para el producto ID " + id);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error disminuirStock: " + e.getMessage());
+            stmt.setInt(1, nuevoStock);
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
