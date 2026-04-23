@@ -1,35 +1,30 @@
-import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Hilo que simula ventas (reduce stock)
+ */
 public class HiloSimularVentas extends Thread {
 
-    private ProductoDAO dao;
-    private Random random = new Random();
-
-    public HiloSimularVentas(ProductoDAO dao) {
-        this.dao = dao;
-    }
+    ProductoDAO dao = new ProductoDAO();
+    Random rand = new Random();
 
     @Override
     public void run() {
         while (true) {
             try {
-                ArrayList<Producto> productos = dao.obtenerProductos();
+                Thread.sleep(8000);
 
-                if (!productos.isEmpty()) {
-                    Producto productoSeleccionado = productos.get(random.nextInt(productos.size()));
-                    int cantidadVenta = random.nextInt(3) + 1;
+                for (Producto p : dao.listar()) {
+                    int venta = rand.nextInt(3); // ventas aleatorias
 
-                    System.out.println("Simulando venta de " + cantidadVenta +
-                            " unidad(es) de: " + productoSeleccionado.getNombre());
-
-                    dao.disminuirStock(productoSeleccionado.getId(), cantidadVenta);
+                    int nuevoStock = Math.max(0, p.getStock() - venta);
+                    dao.actualizarStock(p.getId(), nuevoStock);
                 }
 
-                Thread.sleep(3000);
+                System.out.println("Ventas simuladas");
 
-            } catch (InterruptedException e) {
-                System.out.println("HiloSimularVentas interrumpido: " + e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
