@@ -1,29 +1,36 @@
-import java.io.Serializable;
+/**
+ * Clase modelo Producto
+ */
+public class Producto {
 
-public class Producto implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private int id;
+    private String nombre;
+    private double precio;
+    private int stock;
 
-    private final String codigo;
-    private final String nombre;
-    private final int cantidad;
-    private final double precio;
-
-    public Producto(String codigo, String nombre, int cantidad, double precio) {
-        this.codigo = codigo;
+    public Producto(int id, String nombre, double precio, int stock) {
+        this.id = id;
         this.nombre = nombre;
-        this.cantidad = cantidad;
         this.precio = precio;
+        this.stock = stock;
     }
 
-    public String getCodigo() { return codigo; }
+    public Producto(String nombre, double precio, int stock) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.stock = stock;
+    }
+
+    // Getters y setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public String getNombre() { return nombre; }
-    public int getCantidad() { return cantidad; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
     public double getPrecio() { return precio; }
+    public void setPrecio(double precio) { this.precio = precio; }
 
-    @Override
-    public String toString() {
-        return String.format("Código: %s | Nombre: %s | Cantidad: %d | Precio: %.2f",
-                codigo, nombre, cantidad, precio);
-    }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 }
-
