@@ -9,7 +9,7 @@ public class HiloActualizarStock extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(10000); // cada 10 segundos
+                Thread.sleep(1000000); // cada ciertos segundos
 
                 for (Producto p : dao.listar()) {
                     dao.actualizarStock(p.getId(), p.getStock() + 1);
