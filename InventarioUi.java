@@ -3,9 +3,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.FileWriter;
 
-/**
- * Interfaz principal (TU PARTE)
- */
 public class InventarioUI extends JFrame {
 
     private JTable tabla;
@@ -13,7 +10,8 @@ public class InventarioUI extends JFrame {
     private ProductoDAO dao = new ProductoDAO();
 
     public InventarioUI() {
-        setTitle("Sistema de Inventario - Abril");
+
+        setTitle("Sistema de Inventario");
         setSize(900, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -24,12 +22,12 @@ public class InventarioUI extends JFrame {
         tabla = new JTable(modelo);
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
-        // PANEL BOTONES
+        // BOTONES
         JPanel panel = new JPanel(new FlowLayout());
 
         JButton btnAgregar = new JButton("Agregar");
         JButton btnEliminar = new JButton("Eliminar");
-        JButton btnActualizar = new JButton("Actualizar Tabla");
+        JButton btnActualizar = new JButton("Actualizar");
         JButton btnExportar = new JButton("Exportar CSV");
 
         panel.add(btnAgregar);
@@ -40,12 +38,13 @@ public class InventarioUI extends JFrame {
         add(panel, BorderLayout.SOUTH);
 
         // EVENTOS
-        btnAgregar.addActionListener(e -> agregarProducto());
-        btnEliminar.addActionListener(e -> eliminarProducto());
+        btnAgregar.addActionListener(e -> agregar());
+        btnEliminar.addActionListener(e -> eliminar());
         btnActualizar.addActionListener(e -> cargarTabla());
-        btnExportar.addActionListener(e -> exportarCSV());
+        btnExportar.addActionListener(e -> exportar());
 
         cargarTabla();
+
         setVisible(true);
 
         // HILOS
@@ -53,17 +52,23 @@ public class InventarioUI extends JFrame {
         new HiloSimularVentas().start();
     }
 
-    private void agregarProducto() {
-        String nombre = JOptionPane.showInputDialog("Nombre:");
-        double precio = Double.parseDouble(JOptionPane.showInputDialog("Precio:"));
-        int stock = Integer.parseInt(JOptionPane.showInputDialog("Stock:"));
+    private void agregar() {
+        try {
+            String nombre = JOptionPane.showInputDialog("Nombre:");
+            double precio = Double.parseDouble(JOptionPane.showInputDialog("Precio:"));
+            int stock = Integer.parseInt(JOptionPane.showInputDialog("Stock:"));
 
-        dao.insertar(new Producto(nombre, precio, stock));
-        cargarTabla();
+            dao.insertar(new Producto(nombre, precio, stock));
+            cargarTabla();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error en datos");
+        }
     }
 
-    private void eliminarProducto() {
+    private void eliminar() {
         int fila = tabla.getSelectedRow();
+
         if (fila >= 0) {
             int id = (int) modelo.getValueAt(fila, 0);
             dao.eliminar(id);
@@ -73,6 +78,7 @@ public class InventarioUI extends JFrame {
 
     private void cargarTabla() {
         modelo.setRowCount(0);
+
         for (Producto p : dao.listar()) {
             modelo.addRow(new Object[]{
                     p.getId(),
@@ -83,7 +89,7 @@ public class InventarioUI extends JFrame {
         }
     }
 
-    private void exportarCSV() {
+    private void exportar() {
         try {
             FileWriter fw = new FileWriter("inventario.csv");
 
