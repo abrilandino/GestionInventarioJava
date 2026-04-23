@@ -1,17 +1,10 @@
-CREATE DATABASE IF NOT EXISTS tienda;
+CREATE DATABASE inventario_db;
 
-USE tienda;
-
-CREATE TABLE productos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    precio DOUBLE NOT NULL,
-    cantidad INT NOT NULL
-);
+USE inventario_db;
 
 CREATE TABLE productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
     precio DOUBLE,
-    cantidad INT
+    stock INT
 );
