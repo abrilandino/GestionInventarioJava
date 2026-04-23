@@ -11,48 +11,47 @@ public class InventarioUI extends JFrame {
     private JTextField txtNombre, txtPrecio, txtStock;
 
     public InventarioUI() {
-        setTitle("sistema de inventario");
+        setTitle("Sistema de Inventario");
         setSize(950, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // panel de entrada con color azul claro
+        // panel superior de color azul claro para agregar
         JPanel panelForm = new JPanel(new GridLayout(2, 4, 10, 10));
-        panelForm.setBackground(new Color(220, 235, 250));
-        panelForm.setBorder(BorderFactory.createTitledBorder("gestion de productos"));
+        panelForm.setBackground(new Color(210, 230, 250));
+        panelForm.setBorder(BorderFactory.createTitledBorder("Gestion de Productos"));
 
         txtNombre = new JTextField();
         txtPrecio = new JTextField();
         txtStock = new JTextField();
 
-        panelForm.add(new JLabel("nombre:"));
-        panelForm.add(new JLabel("precio:"));
-        panelForm.add(new JLabel("stock:"));
+        panelForm.add(new JLabel("Nombre del Producto:"));
+        panelForm.add(new JLabel("Precio:"));
+        panelForm.add(new JLabel("Stock:"));
         panelForm.add(new JLabel(""));
 
         panelForm.add(txtNombre);
         panelForm.add(txtPrecio);
         panelForm.add(txtStock);
 
-        JButton btnAgregar = new JButton("agregar");
+        JButton btnAgregar = new JButton("Agregar");
         panelForm.add(btnAgregar);
         add(panelForm, BorderLayout.NORTH);
 
-        // tabla con fondo gris claro en el scrollpane
-        modelo = new DefaultTableModel(new String[]{"ID", "producto", "precio", "stock"}, 0);
+        // area de inventario con fondo gris claro
+        modelo = new DefaultTableModel(new String[]{"ID", "Producto", "Precio", "Stock"}, 0);
         tabla = new JTable(modelo);
         tabla.setRowHeight(25);
         JScrollPane scroll = new JScrollPane(tabla);
-        scroll.getViewport().setBackground(new Color(240, 240, 240));
+        scroll.getViewport().setBackground(new Color(235, 235, 235));
         add(scroll, BorderLayout.CENTER);
 
-        // panel de botones inferior
         JPanel panelBotones = new JPanel();
-        JButton btnEliminar = new JButton("eliminar");
-        JButton btnEditar = new JButton("editar");
-        JButton btnActualizar = new JButton("refrescar");
-        JButton btnExportar = new JButton("exportar csv");
+        JButton btnEliminar = new JButton("Eliminar");
+        JButton btnEditar = new JButton("Editar");
+        JButton btnActualizar = new JButton("Refrescar");
+        JButton btnExportar = new JButton("Exportar CSV");
 
         panelBotones.add(btnEliminar);
         panelBotones.add(btnEditar);
@@ -60,7 +59,6 @@ public class InventarioUI extends JFrame {
         panelBotones.add(btnExportar);
         add(panelBotones, BorderLayout.SOUTH);
 
-        // asignacion de eventos a los botones
         btnAgregar.addActionListener(e -> agregar());
         btnEliminar.addActionListener(e -> eliminar());
         btnEditar.addActionListener(e -> editar());
@@ -68,14 +66,15 @@ public class InventarioUI extends JFrame {
         btnExportar.addActionListener(e -> exportar());
 
         tabla.getSelectionModel().addListSelectionListener(e -> llenarCampos());
+
         cargarTabla();
         setVisible(true);
 
         new HiloActualizarStock().start();
         new HiloSimularVentas().start();
-        
-        // temporizador para refrescar la tabla cada 3 segundos
-        new Timer(3000, e -> cargarTabla()).start();
+
+        // refresca la tabla cada 2 segundos para ver cambios de los hilos
+        new Timer(2000, e -> cargarTabla()).start();
     }
 
     private void agregar() {
@@ -89,7 +88,7 @@ public class InventarioUI extends JFrame {
                 cargarTabla();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "error en los datos");
+            JOptionPane.showMessageDialog(this, "Error en los datos ingresados");
         }
     }
 
@@ -112,13 +111,13 @@ public class InventarioUI extends JFrame {
     }
 
     private void cargarTabla() {
-        int filaSeleccionada = tabla.getSelectedRow();
+        int filaActual = tabla.getSelectedRow();
         modelo.setRowCount(0);
         for (Producto p : dao.listar()) {
             modelo.addRow(new Object[]{p.getId(), p.getNombre(), p.getPrecio(), p.getStock()});
         }
-        if (filaSeleccionada != -1 && filaSeleccionada < modelo.getRowCount()) {
-            tabla.setRowSelectionInterval(filaSeleccionada, filaSeleccionada);
+        if (filaActual != -1 && filaActual < modelo.getRowCount()) {
+            tabla.setRowSelectionInterval(filaActual, filaActual);
         }
     }
 
@@ -142,9 +141,10 @@ public class InventarioUI extends JFrame {
             for (int i = 0; i < modelo.getRowCount(); i++) {
                 fw.write(modelo.getValueAt(i, 0) + "," + modelo.getValueAt(i, 1) + "," + modelo.getValueAt(i, 2) + "," + modelo.getValueAt(i, 3) + "\n");
             }
-            JOptionPane.showMessageDialog(this, "exportado correctamente");
+            JOptionPane.showMessageDialog(this, "Exportacion exitosa");
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "error al exportar");
+            JOptionPane.showMessageDialog(this, "Error al exportar archivo");
         }
     }
+}
 }
