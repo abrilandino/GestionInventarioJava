@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ProductoDAO {
 
-    // inserta un nuevo producto en la base de datos
+    // inserta un producto en la base de datos
     public void insertar(Producto p) {
         String sql = "INSERT INTO productos(nombre, precio, stock) VALUES (?, ?, ?)";
         try (Connection conn = ConexionBD.conectar();
@@ -18,7 +18,7 @@ public class ProductoDAO {
         }
     }
 
-    // obtiene la lista completa de productos
+    // lista todos los productos registrados
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
         String sql = "SELECT * FROM productos";
@@ -26,12 +26,7 @@ public class ProductoDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                lista.add(new Producto(
-                        rs.getInt("id"),
-                        rs.getString("nombre"),
-                        rs.getDouble("precio"),
-                        rs.getInt("stock")
-                ));
+                lista.add(new Producto(rs.getInt("id"), rs.getString("nombre"), rs.getDouble("precio"), rs.getInt("stock")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,7 +34,7 @@ public class ProductoDAO {
         return lista;
     }
 
-    // elimina un producto por su id
+    // elimina un registro por su identificador
     public void eliminar(int id) {
         String sql = "DELETE FROM productos WHERE id=?";
         try (Connection conn = ConexionBD.conectar();
@@ -51,7 +46,7 @@ public class ProductoDAO {
         }
     }
 
-    // actualiza todos los datos de un producto
+    // modifica los datos de un producto existente
     public void actualizar(int id, String nombre, double precio, int stock) {
         String sql = "UPDATE productos SET nombre=?, precio=?, stock=? WHERE id=?";
         try (Connection conn = ConexionBD.conectar();
@@ -66,7 +61,7 @@ public class ProductoDAO {
         }
     }
 
-    // actualiza solo el stock de un producto
+    // actualiza solo el stock desde los hilos
     public void actualizarStock(int id, int nuevoStock) {
         String sql = "UPDATE productos SET stock=? WHERE id=?";
         try (Connection conn = ConexionBD.conectar();
@@ -77,5 +72,7 @@ public class ProductoDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+}
     }
 }
