@@ -1,30 +1,24 @@
-import java.util.ArrayList;
-
+/**
+ * Hilo que aumenta el stock automáticamente
+ */
 public class HiloActualizarStock extends Thread {
 
-    private ProductoDAO dao;
-
-    public HiloActualizarStock(ProductoDAO dao) {
-        this.dao = dao;
-    }
+    ProductoDAO dao = new ProductoDAO();
 
     @Override
     public void run() {
         while (true) {
             try {
-                ArrayList<Producto> productos = dao.obtenerProductos();
+                Thread.sleep(10000); // cada 10 segundos
 
-                for (Producto p : productos) {
-                    if (p.getCantidad() < 5) {
-                        System.out.println("Stock bajo detectado en: " + p.getNombre());
-                        dao.aumentarStock(p.getId(), 10);
-                    }
+                for (Producto p : dao.listar()) {
+                    dao.actualizarStock(p.getId(), p.getStock() + 1);
                 }
 
-                Thread.sleep(5000);
+                System.out.println("Stock actualizado automáticamente");
 
-            } catch (InterruptedException e) {
-                System.out.println("HiloActualizarStock interrumpido: " + e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
